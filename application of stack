@@ -1,0 +1,112 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+#define MAX_SIZE 100
+
+char stack[MAX_SIZE];
+int top = -1;
+
+void push(char c);
+char pop();
+char peek();
+int is_empty();
+int is_full();
+int priority(char c);
+void infix_to_postfix(char infix[], char postfix[]);
+
+int main() {
+    char infix[MAX_SIZE], postfix[MAX_SIZE];
+
+    printf("Enter an infix expression: ");
+    fgets(infix, MAX_SIZE, stdin);
+
+    infix_to_postfix(infix, postfix);
+
+    printf("Postfix expression: %s\n", postfix);
+
+    return 0;
+}
+
+void push(char c) {
+    if (is_full()) {
+        printf("Error: stack is full\n");
+        exit(EXIT_FAILURE);
+    }
+
+    stack[++top] = c;
+}
+
+char pop() {
+    if (is_empty()) {
+        printf("Error: stack is empty\n");
+        exit(EXIT_FAILURE);
+    }
+
+    return stack[top--];
+}
+
+char peek() {
+    if (is_empty()) {
+        printf("Error: stack is empty\n");
+        exit(EXIT_FAILURE);
+    }
+
+    return stack[top];
+}
+
+int is_empty() {
+    return top == -1;
+}
+
+int is_full() {
+    return top == MAX_SIZE - 1;
+}
+
+int priority(char c) {
+    switch (c) {
+        case '^':
+            return 3;
+        case '*':
+        case '/':
+            return 2;
+        case '+':
+        case '-':
+            return 1;
+        default:
+            return 0;
+    }
+}
+
+void infix_to_postfix(char infix[], char postfix[]) {
+    int i = 0, j = 0;
+
+    while (infix[i] != '\0') {
+        if (isdigit(infix[i]) || isalpha(infix[i])) {
+            postfix[j++] = infix[i++];
+        } else if (infix[i] == '(') {
+            push(infix[i++]);
+        } else if (infix[i] == ')') {
+            while (peek() != '(') {
+                postfix[j++] = pop();
+            }
+
+            pop();
+            i++; 
+        } else if (infix[i] == '+' || infix[i] == '-' || infix[i] == '*' || infix[i] == '/' || infix[i] == '^') {
+            while (!is_empty() && peek() != '(' && priority(infix[i]) <= priority(peek())) {
+                postfix[j++] = pop();
+            }
+
+            push(infix[i++]);
+        } else {
+            i++;
+        }
+    }
+
+    while (!is_empty()) {
+        postfix[j++] = pop();
+    }
+
+    postfix[j] = '\0';
+}
