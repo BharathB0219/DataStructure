@@ -1,0 +1,26 @@
+#include <stdio.h>
+
+int main() {
+    int n, i;
+
+    printf("Enter the number of elements in the set: ");
+    scanf("%d", &n);
+
+    int numbers[n];
+
+    printf("Enter the numbers:\n");
+    for (i = 0; i < n; i++) {
+        scanf("%d", &numbers[i]);
+    }
+
+    printf("\nOdd/Even Analysis:\n");
+    for (i = 0; i < n; i++) {
+        if (numbers[i] % 2 == 0) {
+            printf("%d is even.\n", numbers[i]);
+        } else {
+            printf("%d is odd.\n", numbers[i]);
+        }
+    }
+
+    return 0;
+}
